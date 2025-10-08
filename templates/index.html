@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Coding Standards Tools</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script>
+        function showLoader() {
+            document.getElementById("loader").style.display = "flex";
+        }
+
+        function copyRevisedCode() {
+            const codeBlock = document.getElementById("revisedCode");
+            const text = codeBlock.innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                alert("✅ Revised code copied to clipboard!");
+            }).catch(err => {
+                alert("❌ Failed to copy code: " + err);
+            });
+        }
+    </script>
+
+</head>
+<body>
+    <h1>Coding Standards Tool - Gemini AI</h1>
+
+<form method="POST" onsubmit="showLoader()">
+    <!-- Dynamic Language Dropdown -->
+    <label for="language">Select Language (optional):</label><br>
+    <select id="language" name="language">
+        <option value="">Auto Detect</option>
+        {% for lang in languages %}
+            <option value="{{ lang }}" {% if selected_language == lang %}selected{% endif %}>
+                {{ lang|capitalize }}
+            </option>
+        {% endfor %}
+    </select>
+    <br><br>
+
+    <label for="code">Enter Your Code:</label><br>
+    <textarea id="code" name="code">{{ code_input }}</textarea><br>
+
+    <div class="button-group">
+        <button type="submit" name="analyze">Analyze Code</button>
+        <button type="submit" name="clear" class="clear-btn">Clear</button>
+    </div>
+</form>
+
+
+    <!-- Loader -->
+    <div id="loader" class="loader-container">
+        <div class="spinner"></div>
+        <p>Analyzing your code, please wait...</p>
+    </div>
+
+    <!-- Panels in one row -->
+    <div class="container">
+        <div class="panel error">
+            <h2>❌ Errors / Violations</h2>
+            <pre>{{ errors }}</pre>
+        </div>
+        <div class="panel success">
+            <h2>✅ Suggestions / Improvements</h2>
+            <pre>{{ suggestions }}</pre>
+        </div>
+        <div class="panel revised">
+            <h2>
+                📝 Revised Code
+                <button type="button" class="copy-btn" onclick="copyRevisedCode()">📋 Copy</button>
+            </h2>
+            <pre id="revisedCode">{{ revised_code }}</pre>
+        </div>
+    </div>
+</body>
+</html>
