@@ -144,15 +144,15 @@ def index():
 
             if code_input:
                 try:
-                    # ✅ Detect code language
+                    # Detect code language
                     selected_language = detect_language(code_input)
                     print(f"✅ Detected Language: {selected_language}")
 
-                    # ✅ Detect code domain (nature)
+                    # Detect code domain
                     code_domain = detect_code_domain(code_input)
                     print(f"✅ Detected Domain: {code_domain}")
 
-                    # ✅ Ensure coding standards exist
+                    # Ensure coding standards exist
                     if selected_language not in LANGUAGE_MAP:
                         errors = f"⚠️ Unrecognized language '{selected_language}'. No coding standard available."
                         return render_template(
@@ -162,22 +162,17 @@ def index():
                             selected_language=None
                         )
 
-                    # ✅ Extract coding standards text
-                    # pdf_path = os.path.join(STANDARDS_DIR, LANGUAGE_MAP[selected_language])
-                    # coding_standards = extract_pdf_text(pdf_path)
-                    # coding_standards = truncate_text(coding_standards)
-                    # code_input_trunc = truncate_text(code_input)
+                    # Truncate user input to avoid token overflow
+                    code_input_trunc = truncate_text(code_input)
 
-
-                    # ✅ Combine all coding standard PDFs for that language
+                    # Combine all coding standard PDFs for that language
                     coding_standards = ""
                     for file_name in LANGUAGE_MAP[selected_language]:
-                         pdf_path = os.path.join(STANDARDS_DIR, file_name)
-                         coding_standards += extract_pdf_text(pdf_path) + "\n"
+                        pdf_path = os.path.join(STANDARDS_DIR, file_name)
+                        coding_standards += extract_pdf_text(pdf_path) + "\n"
                     coding_standards = truncate_text(coding_standards)
 
-
-                    # ✅ Ask Gemini to perform review + domain consistency check
+                    # Ask Gemini to perform review + domain consistency check
                     review_model = genai.GenerativeModel("gemini-2.0-flash")
                     review_prompt = (
                         "You are a senior secure code reviewer. Perform the following tasks strictly:\n"
@@ -198,7 +193,7 @@ def index():
                     response = review_model.generate_content(review_prompt)
                     analysis = response.text.strip()
 
-                    # ✅ Extract sections
+                    # Extract sections
                     error_match = re.search(r"Errors:\s*(.*?)(?=Suggestions:|Revised Code:|$)", analysis, re.DOTALL | re.IGNORECASE)
                     suggestion_match = re.search(r"Suggestions:\s*(.*?)(?=Revised Code:|$)", analysis, re.DOTALL | re.IGNORECASE)
                     revised_match = re.search(r"Revised Code:\s*(.*)", analysis, re.DOTALL | re.IGNORECASE)
@@ -222,6 +217,7 @@ def index():
         languages=list(LANGUAGE_MAP.keys()),
         selected_language=selected_language
     )
+
 
 if __name__ == "__main__":
     app.run(debug=False, host="0.0.0.0", port=5000)
