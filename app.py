@@ -22,18 +22,34 @@ genai.configure(api_key=api_key)
 # ✅ Directory for coding standard PDFs
 STANDARDS_DIR = "coding_standards"
 
-# ✅ Map programming languages to their coding standard files
+dotnet_standards = [
+    "Coding_Standards_Dot_Net.pdf",
+    "Coding_Standards_CSharp_new.pdf"
+]
+
+# Map multiple aliases to the same value
 LANGUAGE_MAP = {
-    "php": ["Coding_Standards_PHP.pdf"],
-    "java": ["Coding_Standards_Java.pdf","Coding_Standards_Java_new.pdf"],
-    "ios": ["Coding_Standards_iOS.pdf"],
-    "dotnet": ["Coding_Standards_Dot_Net.pdf"],
-    "csharp": ["Coding_Standards_Dot_Net.pdf"],
-    "c#": ["Coding_Standards_Dot_Net.pdf"],
+    "c#": dotnet_standards,
+    "csharp": dotnet_standards,
+    "dotnet": dotnet_standards,
+
     "android": ["Coding_Standards_Android.pdf"],
     "c": ["Coding_Standards_C.pdf"],
-    "python":[ "Coding_Standards_Python.pdf"]
+    "css": ["Coding_Standards_CSS.pdf"],
+    "html": ["Coding_Standards_HTML.pdf"],
+    "ios": ["Coding_Standards_iOS.pdf"],
+    "java": ["Coding_Standards_Java.pdf", "Coding_Standards_Java_new.pdf"],
+    "js": ["Coding_Standards_JavaScript.pdf"],
+    "php": ["Coding_Standards_PHP.pdf"],
+    "php codeigniter": ["Coding_Standards_PHP_CodeIgniter.pdf"],
+    "php laravel": ["Coding_Standards_PHP_Laravel.pdf"],
+    "python": ["Coding_Standards_Python.pdf", "Coding_Standards_Python_new.pdf"],
+    "sql": ["Coding_Standards_SQL.pdf"],
+    "mysql":["Coding_Standards_MySQL.pdf"]
 }
+
+
+
 
 # ✅ Securely extract text from PDF
 def extract_pdf_text(pdf_path):
@@ -154,7 +170,7 @@ def index():
 
                     # Ensure coding standards exist
                     if selected_language not in LANGUAGE_MAP:
-                        errors = f"⚠️ Unrecognized language '{selected_language}'. No coding standard available."
+                        errors = f" Unrecognized language '{selected_language}'. No coding standard available."
                         return render_template(
                             "index.html", code_input=code_input, errors=errors,
                             suggestions="", revised_code="", code_domain=code_domain,
